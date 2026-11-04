@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { SECTOR_DATA } from '../data/reportData';
 import { RooftopCalculator } from './RooftopCalculator';
+import { BiodiversityChart } from './BiodiversityChart';
 
 export const SectorImpactSection: React.FC = () => {
   const [selectedType, setSelectedType] = useState<string>(SECTOR_DATA[0].buildingType);
@@ -108,6 +109,12 @@ export const SectorImpactSection: React.FC = () => {
             </div>
           </motion.div>
         </AnimatePresence>
+
+        {/* Visual Biodiversity Increase Metrics Interactive Recharts Component */}
+        <BiodiversityChart
+          selectedSectorName={selectedType}
+          onSelectSector={setSelectedType}
+        />
 
         {/* Dynamic Rooftop Sanctuary Environmental Impact Calculator */}
         <RooftopCalculator />
