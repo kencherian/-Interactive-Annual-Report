@@ -25,6 +25,10 @@ import {
   Layers,
   Info,
   CheckCircle2,
+  Download,
+  FileSpreadsheet,
+  ChevronDown,
+  Check,
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import {
@@ -32,6 +36,7 @@ import {
   SpeciesCategoryId,
   SectorBiodiversityRecord,
 } from '../data/biodiversityData';
+import { exportCategoryCSV, exportCompleteBiodiversityCSV } from '../utils/csvExport';
 
 interface BiodiversityChartProps {
   selectedSectorName?: string;
@@ -47,6 +52,33 @@ export const BiodiversityChart: React.FC<BiodiversityChartProps> = ({
   const { isDark } = useTheme();
   const [selectedCategory, setSelectedCategory] = useState<SpeciesCategoryId>('all');
   const [viewMode, setViewMode] = useState<ViewMode>('comparison');
+  const [showExportMenu, setShowExportMenu] = useState(false);
+  const [downloadedFile, setDownloadedFile] = useState<string | null>(null);
+  const exportMenuRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (exportMenuRef.current && !exportMenuRef.current.contains(event.target as Node)) {
+        setShowExportMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleExportCurrent = () => {
+    const file = exportCategoryCSV(category);
+    setDownloadedFile(file);
+    setShowExportMenu(false);
+    setTimeout(() => setDownloadedFile(null), 5000);
+  };
+
+  const handleExportAll = () => {
+    const file = exportCompleteBiodiversityCSV();
+    setDownloadedFile(file);
+    setShowExportMenu(false);
+    setTimeout(() => setDownloadedFile(null), 5000);
+  };
 
   const category = BIODIVERSITY_CATEGORIES[selectedCategory];
 
@@ -256,45 +288,152 @@ export const BiodiversityChart: React.FC<BiodiversityChartProps> = ({
           })}
         </div>
 
-        {/* View Mode Switcher */}
-        <div className="flex items-center rounded-xl p-1 bg-[#F5F2EB] dark:bg-[#182617] border border-[#243324]/10 dark:border-white/10 self-start sm:self-auto shrink-0">
-          <button
-            onClick={() => setViewMode('comparison')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
-              viewMode === 'comparison'
-                ? 'bg-white dark:bg-[#283C27] text-[#1F2B1D] dark:text-[#F4EFE6] shadow-sm font-semibold'
-                : 'text-[#657351] dark:text-[#A3B59E] hover:text-[#1F2B1D] dark:hover:text-[#F4EFE6]'
-            }`}
-          >
-            <BarChart3 className="w-3.5 h-3.5" />
-            <span>Before vs 2026</span>
-          </button>
+        {/* Right side: View Mode Switcher & Export CSV */}
+        <div className="flex flex-wrap items-center gap-2.5 self-start sm:self-auto shrink-0">
+          {/* View Mode Switcher */}
+          <div className="flex items-center rounded-xl p-1 bg-[#F5F2EB] dark:bg-[#182617] border border-[#243324]/10 dark:border-white/10 shrink-0">
+            <button
+              onClick={() => setViewMode('comparison')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                viewMode === 'comparison'
+                  ? 'bg-white dark:bg-[#283C27] text-[#1F2B1D] dark:text-[#F4EFE6] shadow-sm font-semibold'
+                  : 'text-[#657351] dark:text-[#A3B59E] hover:text-[#1F2B1D] dark:hover:text-[#F4EFE6]'
+              }`}
+            >
+              <BarChart3 className="w-3.5 h-3.5" />
+              <span>Before vs 2026</span>
+            </button>
 
-          <button
-            onClick={() => setViewMode('trajectory')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
-              viewMode === 'trajectory'
-                ? 'bg-white dark:bg-[#283C27] text-[#1F2B1D] dark:text-[#F4EFE6] shadow-sm font-semibold'
-                : 'text-[#657351] dark:text-[#A3B59E] hover:text-[#1F2B1D] dark:hover:text-[#F4EFE6]'
-            }`}
-          >
-            <TrendingUp className="w-3.5 h-3.5" />
-            <span>4-Year Trend</span>
-          </button>
+            <button
+              onClick={() => setViewMode('trajectory')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                viewMode === 'trajectory'
+                  ? 'bg-white dark:bg-[#283C27] text-[#1F2B1D] dark:text-[#F4EFE6] shadow-sm font-semibold'
+                  : 'text-[#657351] dark:text-[#A3B59E] hover:text-[#1F2B1D] dark:hover:text-[#F4EFE6]'
+              }`}
+            >
+              <TrendingUp className="w-3.5 h-3.5" />
+              <span>4-Year Trend</span>
+            </button>
 
-          <button
-            onClick={() => setViewMode('activity')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
-              viewMode === 'activity'
-                ? 'bg-white dark:bg-[#283C27] text-[#1F2B1D] dark:text-[#F4EFE6] shadow-sm font-semibold'
-                : 'text-[#657351] dark:text-[#A3B59E] hover:text-[#1F2B1D] dark:hover:text-[#F4EFE6]'
-            }`}
-          >
-            <Activity className="w-3.5 h-3.5" />
-            <span>Activity Density</span>
-          </button>
+            <button
+              onClick={() => setViewMode('activity')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                viewMode === 'activity'
+                  ? 'bg-white dark:bg-[#283C27] text-[#1F2B1D] dark:text-[#F4EFE6] shadow-sm font-semibold'
+                  : 'text-[#657351] dark:text-[#A3B59E] hover:text-[#1F2B1D] dark:hover:text-[#F4EFE6]'
+              }`}
+            >
+              <Activity className="w-3.5 h-3.5" />
+              <span>Activity Density</span>
+            </button>
+          </div>
+
+          {/* Export CSV Dropdown */}
+          <div className="relative" ref={exportMenuRef}>
+            <button
+              onClick={() => setShowExportMenu((prev) => !prev)}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-medium bg-[#F5F2EB] dark:bg-[#182617] text-[#1F2B1D] dark:text-[#F4EFE6] hover:bg-[#EBE6DC] dark:hover:bg-[#253924] border border-[#243324]/10 dark:border-white/10 shadow-sm transition-all cursor-pointer"
+              title="Download biodiversity metrics in CSV format for offline analysis"
+              aria-label="Export biodiversity metrics CSV"
+              aria-expanded={showExportMenu}
+            >
+              <Download className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              <span className="font-semibold">Export CSV</span>
+              <ChevronDown
+                className={`w-3 h-3 text-[#657351] dark:text-[#A3B59E] transition-transform duration-200 ${
+                  showExportMenu ? 'rotate-180' : ''
+                }`}
+              />
+            </button>
+
+            {/* Dropdown Popover */}
+            <AnimatePresence>
+              {showExportMenu && (
+                <motion.div
+                  initial={{ opacity: 0, y: 6, scale: 0.96 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 6, scale: 0.96 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute right-0 mt-2 w-72 rounded-2xl bg-white dark:bg-[#1C2C1B] border border-[#243324]/15 dark:border-white/15 shadow-2xl p-2 z-50 text-left space-y-1"
+                >
+                  <div className="px-3 py-2 border-b border-[#243324]/10 dark:border-white/10">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-[#657351] dark:text-[#A3B59E]">
+                      Offline Spreadsheet Data (CSV)
+                    </p>
+                    <p className="text-xs text-[#4A5D44] dark:text-[#CBD7C7] font-light">
+                      Compatible with Excel, Google Sheets, & Numbers
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={handleExportCurrent}
+                    className="w-full flex items-start gap-2.5 p-2.5 rounded-xl hover:bg-[#F5F2EB] dark:hover:bg-[#263A25] text-left transition-colors cursor-pointer group"
+                  >
+                    <div className="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                      <FileSpreadsheet className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-semibold text-[#1F2B1D] dark:text-[#F4EFE6] flex items-center gap-1.5">
+                        <span>Current View ({category.shortLabel})</span>
+                      </div>
+                      <div className="text-[11px] text-[#657351] dark:text-[#A3B59E] leading-snug">
+                        Sector breakdown, 2022 baseline vs 2026, and 4-year trajectory
+                      </div>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={handleExportAll}
+                    className="w-full flex items-start gap-2.5 p-2.5 rounded-xl hover:bg-[#F5F2EB] dark:hover:bg-[#263A25] text-left transition-colors cursor-pointer group border-t border-[#243324]/5 dark:border-white/5"
+                  >
+                    <div className="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-950/70 text-amber-700 dark:text-amber-300 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                      <Download className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-semibold text-[#1F2B1D] dark:text-[#F4EFE6]">
+                        Complete Master Dataset
+                      </div>
+                      <div className="text-[11px] text-[#657351] dark:text-[#A3B59E] leading-snug">
+                        All 5 species categories across all 52 rooftop sanctuaries
+                      </div>
+                    </div>
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       </div>
+
+      {/* Download Confirmation Toast Banner */}
+      <AnimatePresence>
+        {downloadedFile && (
+          <motion.div
+            initial={{ opacity: 0, height: 0, y: -8 }}
+            animate={{ opacity: 1, height: 'auto', y: 0 }}
+            exit={{ opacity: 0, height: 0, y: -8 }}
+            className="overflow-hidden"
+          >
+            <div className="flex items-center justify-between gap-3 px-4 py-2.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-900 dark:text-emerald-200 shadow-sm">
+              <div className="flex items-center gap-2.5">
+                <div className="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0">
+                  <Check className="w-3 h-3" />
+                </div>
+                <span>
+                  Exported <strong className="font-semibold">{downloadedFile}</strong> with UTF-8 BOM encoding for offline analysis.
+                </span>
+              </div>
+              <button
+                onClick={() => setDownloadedFile(null)}
+                className="text-[11px] font-semibold underline text-emerald-700 dark:text-emerald-300 hover:text-emerald-900 cursor-pointer"
+              >
+                Dismiss
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Main Interactive Recharts Chart Area */}
       <AnimatePresence mode="wait">
@@ -554,6 +693,31 @@ export const BiodiversityChart: React.FC<BiodiversityChartProps> = ({
               </li>
             ))}
           </ul>
+        </div>
+      </div>
+
+      {/* Offline Research Data Footer Banner */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t border-[#243324]/10 dark:border-white/10 text-xs text-[#657351] dark:text-[#A3B59E]">
+        <div className="flex items-center gap-2">
+          <FileSpreadsheet className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+          <span>
+            Offline analysis dataset formatted with UTF-8 BOM encoding for Excel, Google Sheets, & R.
+          </span>
+        </div>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleExportCurrent}
+            className="font-medium text-[#1F2B1D] dark:text-[#F4EFE6] hover:text-emerald-700 dark:hover:text-emerald-300 underline underline-offset-2 transition-colors cursor-pointer"
+          >
+            Export {category.shortLabel} CSV
+          </button>
+          <span>•</span>
+          <button
+            onClick={handleExportAll}
+            className="font-semibold text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 underline underline-offset-2 transition-colors cursor-pointer"
+          >
+            Export Full Dataset (52 Sites)
+          </button>
         </div>
       </div>
     </div>
