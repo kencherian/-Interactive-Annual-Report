@@ -2,6 +2,12 @@ import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { REPORT_METADATA } from '../data/reportData';
 import { IMAGES } from '../assets/images';
+import {
+  staggerContainer,
+  fadeInUp,
+  fadeInScale,
+  defaultViewport,
+} from '../utils/animationVariants';
 
 export const StormwaterClimateSection: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -18,18 +24,24 @@ export const StormwaterClimateSection: React.FC = () => {
       className="relative min-h-screen py-24 px-4 sm:px-8 lg:px-12 flex flex-col justify-center border-t border-[#243324]/10 dark:border-white/10 bg-[#FBF9F5] dark:bg-[#131D12] text-[#243324] dark:text-[#F4EFE6] transition-colors duration-400"
     >
       <div className="max-w-6xl mx-auto w-full space-y-16">
-        {/* Section Headline */}
-        <div className="space-y-4 max-w-4xl">
-          <p className="text-sm font-medium tracking-wide text-[#657351] dark:text-[#A3B59E]">
+        {/* Section Headline - Fluid Staggered Reveal */}
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={defaultViewport}
+          className="space-y-4 max-w-4xl"
+        >
+          <motion.p variants={fadeInUp} className="text-sm font-medium tracking-wide text-[#657351] dark:text-[#A3B59E]">
             Climate Resilience
-          </p>
-          <h2 className="font-display text-4xl sm:text-6xl lg:text-7xl text-[#1F2B1D] dark:text-[#F4EFE6] font-normal leading-[1.02] tracking-tight">
+          </motion.p>
+          <motion.h2 variants={fadeInUp} className="font-display text-4xl sm:text-6xl lg:text-7xl text-[#1F2B1D] dark:text-[#F4EFE6] font-normal leading-[1.02] tracking-tight">
             Urban sponge roofs absorb stormwater before it overwhelms London.
-          </h2>
-          <p className="text-lg sm:text-xl text-[#4A5D44] dark:text-[#CBD7C7] font-light leading-relaxed">
+          </motion.h2>
+          <motion.p variants={fadeInUp} className="text-lg sm:text-xl text-[#4A5D44] dark:text-[#CBD7C7] font-light leading-relaxed">
             By planting living soil and hardy wildflowers over bare rooftop asphalt, our 52 sanctuaries act as natural rain sponges and cool the surrounding city air.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
         {/* Visual & Metrics Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">

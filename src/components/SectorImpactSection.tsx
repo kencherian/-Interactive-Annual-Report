@@ -3,6 +3,12 @@ import { motion, AnimatePresence } from 'motion/react';
 import { SECTOR_DATA } from '../data/reportData';
 import { RooftopCalculator } from './RooftopCalculator';
 import { BiodiversityChart } from './BiodiversityChart';
+import {
+  staggerContainer,
+  fastStaggerContainer,
+  fadeInUp,
+  defaultViewport,
+} from '../utils/animationVariants';
 
 export const SectorImpactSection: React.FC = () => {
   const [selectedType, setSelectedType] = useState<string>(SECTOR_DATA[0].buildingType);
@@ -11,25 +17,38 @@ export const SectorImpactSection: React.FC = () => {
   return (
     <section className="relative min-h-screen py-24 px-4 sm:px-8 lg:px-12 flex flex-col justify-center border-t border-[#243324]/10 dark:border-white/10 bg-[#F5F2EB] dark:bg-[#182417] text-[#243324] dark:text-[#F4EFE6] transition-colors duration-400">
       <div className="max-w-6xl mx-auto w-full space-y-12">
-        {/* Headline */}
-        <div className="space-y-4 max-w-4xl">
-          <p className="text-sm font-medium tracking-wide text-[#657351] dark:text-[#A3B59E]">
+        {/* Headline - Fluid Staggered Reveal */}
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={defaultViewport}
+          className="space-y-4 max-w-4xl"
+        >
+          <motion.p variants={fadeInUp} className="text-sm font-medium tracking-wide text-[#657351] dark:text-[#A3B59E]">
             Sector Ecosystem
-          </p>
-          <h2 className="font-display text-4xl sm:text-6xl lg:text-7xl text-[#1F2B1D] dark:text-[#F4EFE6] font-normal leading-[1.02] tracking-tight">
+          </motion.p>
+          <motion.h2 variants={fadeInUp} className="font-display text-4xl sm:text-6xl lg:text-7xl text-[#1F2B1D] dark:text-[#F4EFE6] font-normal leading-[1.02] tracking-tight">
             Commercial rooftops fund educational and civic biodiversity.
-          </h2>
-          <p className="text-lg sm:text-xl text-[#4A5D44] dark:text-[#CBD7C7] font-light leading-relaxed">
+          </motion.h2>
+          <motion.p variants={fadeInUp} className="text-lg sm:text-xl text-[#4A5D44] dark:text-[#CBD7C7] font-light leading-relaxed">
             Corporate office partnerships and luxury hotel apiaries generated £280,500 in sponsorships and 2.6 tonnes of honey, directly funding outdoor learning labs for schools and shared neighborhood gardens.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
-        {/* Sector Navigation Strip */}
-        <div className="flex flex-wrap gap-2 sm:gap-3">
+        {/* Sector Navigation Strip - Staggered Buttons */}
+        <motion.div
+          variants={fastStaggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={defaultViewport}
+          className="flex flex-wrap gap-2 sm:gap-3"
+        >
           {SECTOR_DATA.map((sector) => {
             const isSelected = selectedType === sector.buildingType;
             return (
-              <button
+              <motion.button
+                variants={fadeInUp}
                 key={sector.buildingType}
                 onClick={() => setSelectedType(sector.buildingType)}
                 className={`px-5 py-3 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer ${
@@ -39,10 +58,10 @@ export const SectorImpactSection: React.FC = () => {
                 }`}
               >
                 {sector.buildingType}
-              </button>
+              </motion.button>
             );
           })}
-        </div>
+        </motion.div>
 
         {/* Detailed Sector Spotlight Card - Slides in from right */}
         <AnimatePresence mode="wait">

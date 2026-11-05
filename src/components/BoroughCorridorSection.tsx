@@ -5,6 +5,13 @@ import { AnimatedNumber } from './AnimatedNumber';
 import { BOROUGHS_DATA, REPORT_METADATA } from '../data/reportData';
 import { BOROUGH_METRICS } from '../data/londonMapData';
 import { LondonPollinatorMap } from './LondonPollinatorMap';
+import {
+  staggerContainer,
+  fadeInUp,
+  fadeInScale,
+  cardViewport,
+  defaultViewport,
+} from '../utils/animationVariants';
 
 export const BoroughCorridorSection: React.FC = () => {
   const [selectedBorough, setSelectedBorough] = useState<string | null>(null);
@@ -103,22 +110,32 @@ export const BoroughCorridorSection: React.FC = () => {
       className="relative min-h-screen py-20 sm:py-28 px-4 sm:px-8 lg:px-12 flex flex-col justify-center border-t border-[#243324]/10 dark:border-white/10 bg-[#F5F2EB] dark:bg-[#182417] text-[#243324] dark:text-[#F4EFE6] transition-colors duration-400"
     >
       <div className="max-w-6xl mx-auto w-full space-y-8 sm:space-y-10">
-        {/* Section Headline / Strategic Context */}
-        <div className="space-y-4 max-w-3xl">
-          <p className="text-sm font-medium tracking-wide text-[#657351] dark:text-[#A3B59E]">
+        {/* Section Headline / Strategic Context - Staggered Reveal */}
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={defaultViewport}
+          className="space-y-4 max-w-3xl"
+        >
+          <motion.p variants={fadeInUp} className="text-sm font-medium tracking-wide text-[#657351] dark:text-[#A3B59E]">
             Ecological Connectivity & Corridors
-          </p>
-          <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl text-[#1F2B1D] dark:text-[#F4EFE6] font-normal leading-[1.05] tracking-tight">
+          </motion.p>
+          <motion.h2 variants={fadeInUp} className="font-display text-4xl sm:text-5xl lg:text-6xl text-[#1F2B1D] dark:text-[#F4EFE6] font-normal leading-[1.05] tracking-tight">
             London’s fragmented rooftops are now a continuous pollinator highway.
-          </h2>
-          <p className="text-base sm:text-lg text-[#4A5D44] dark:text-[#D2CBBF] font-light leading-relaxed">
+          </motion.h2>
+          <motion.p variants={fadeInUp} className="text-base sm:text-lg text-[#4A5D44] dark:text-[#D2CBBF] font-light leading-relaxed">
             By situating wildflower meadows within 2 km of royal parks and river corridors, 194 active hives connect 11 municipal boroughs into safe foraging networks.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
-        {/* Integrated Card Container Outlined with Dark Green (Background matching Hero Section #FBF9F5, soft shadow like Sector cards) */}
-        <div
+        {/* Integrated Card Container Outlined with Dark Green - Smooth Scale & Lift Reveal */}
+        <motion.div
           ref={cardContainerRef}
+          variants={fadeInScale}
+          initial="hidden"
+          whileInView="visible"
+          viewport={cardViewport}
           className="w-full bg-[#FBF9F5] dark:bg-[#152014] rounded-3xl sm:rounded-[2.5rem] border-2 border-[#243324] dark:border-[#384F35] shadow-lg overflow-hidden flex flex-col transition-colors duration-400"
         >
           {/* Left-Aligned Control Bar (Clean with NO dividing border line below) */}
@@ -321,7 +338,7 @@ export const BoroughCorridorSection: React.FC = () => {
               </AnimatePresence>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

@@ -3,6 +3,12 @@ import { motion, useScroll, useTransform } from 'motion/react';
 import { AnimatedNumber } from './AnimatedNumber';
 import { REPORT_METADATA } from '../data/reportData';
 import { IMAGES } from '../assets/images';
+import {
+  staggerContainer,
+  fadeInUp,
+  fadeInScale,
+  defaultViewport,
+} from '../utils/animationVariants';
 
 export const FoodSharingSection: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -19,18 +25,24 @@ export const FoodSharingSection: React.FC = () => {
       className="relative min-h-screen py-24 px-4 sm:px-8 lg:px-12 flex flex-col justify-center border-t border-[#243324]/10 dark:border-white/10 bg-[#FBF9F5] dark:bg-[#131D12] text-[#243324] dark:text-[#F4EFE6] transition-colors duration-400"
     >
       <div className="max-w-6xl mx-auto w-full space-y-16">
-        {/* Headline */}
-        <div className="space-y-4 max-w-4xl">
-          <p className="text-sm font-medium tracking-wide text-[#657351] dark:text-[#A3B59E]">
+        {/* Headline - Fluid Staggered Reveal */}
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={defaultViewport}
+          className="space-y-4 max-w-4xl"
+        >
+          <motion.p variants={fadeInUp} className="text-sm font-medium tracking-wide text-[#657351] dark:text-[#A3B59E]">
             Food Equity
-          </p>
-          <h2 className="font-display text-4xl sm:text-6xl lg:text-7xl text-[#1F2B1D] dark:text-[#F4EFE6] font-normal leading-[1.02] tracking-tight">
+          </motion.p>
+          <motion.h2 variants={fadeInUp} className="font-display text-4xl sm:text-6xl lg:text-7xl text-[#1F2B1D] dark:text-[#F4EFE6] font-normal leading-[1.02] tracking-tight">
             Turning pure London honey into nourishing food for local neighbours.
-          </h2>
-          <p className="text-lg sm:text-xl text-[#4A5D44] dark:text-[#CBD7C7] font-light leading-relaxed">
+          </motion.h2>
+          <motion.p variants={fadeInUp} className="text-lg sm:text-xl text-[#4A5D44] dark:text-[#CBD7C7] font-light leading-relaxed">
             Rather than selling honey exclusively at high-end boutiques, our community harvest model routes thousands of jars directly to Southwark, Islington, and Hackney food pantries.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
         {/* Visual & Metric Integration */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
@@ -52,9 +64,18 @@ export const FoodSharingSection: React.FC = () => {
             </div>
           </motion.div>
 
-          {/* Impact Stats */}
-          <div className="lg:col-span-6 space-y-6">
-            <div className="p-8 sm:p-10 rounded-[2.5rem] bg-[#F5F2EB] dark:bg-[#233522] border border-[#243324]/10 dark:border-white/12 shadow-sm space-y-3 transition-colors duration-400">
+          {/* Impact Stats - Staggered Cards */}
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={defaultViewport}
+            className="lg:col-span-6 space-y-6"
+          >
+            <motion.div
+              variants={fadeInUp}
+              className="p-8 sm:p-10 rounded-[2.5rem] bg-[#F5F2EB] dark:bg-[#233522] border border-[#243324]/10 dark:border-white/12 shadow-sm space-y-3 transition-colors duration-400"
+            >
               <div className="font-display text-5xl sm:text-6xl text-[#1F2B1D] dark:text-[#F4EFE6] font-light tracking-tight">
                 <AnimatedNumber value={REPORT_METADATA.jarsDonated} />
               </div>
@@ -62,9 +83,12 @@ export const FoodSharingSection: React.FC = () => {
               <p className="text-sm text-[#4A5D44] dark:text-[#CBD7C7] font-light leading-relaxed">
                 Directly distributed to local families facing food insecurity, accompanied by nutritional and wildflower guides.
               </p>
-            </div>
+            </motion.div>
 
-            <div className="p-8 sm:p-10 rounded-[2.5rem] bg-[#F5F2EB] dark:bg-[#233522] border border-[#243324]/10 dark:border-white/12 shadow-sm space-y-3 transition-colors duration-400">
+            <motion.div
+              variants={fadeInUp}
+              className="p-8 sm:p-10 rounded-[2.5rem] bg-[#F5F2EB] dark:bg-[#233522] border border-[#243324]/10 dark:border-white/12 shadow-sm space-y-3 transition-colors duration-400"
+            >
               <div className="font-display text-5xl sm:text-6xl text-[#1F2B1D] dark:text-[#F4EFE6] font-light tracking-tight">
                 <AnimatedNumber value={REPORT_METADATA.honeyHarvestKg} suffix=" kg" />
               </div>
@@ -72,8 +96,8 @@ export const FoodSharingSection: React.FC = () => {
               <p className="text-sm text-[#4A5D44] dark:text-[#CBD7C7] font-light leading-relaxed">
                 Extracted sustainably leaving at least 15 kg of surplus winter honey inside each hive for winter colony sustenance.
               </p>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
       </div>
     </section>

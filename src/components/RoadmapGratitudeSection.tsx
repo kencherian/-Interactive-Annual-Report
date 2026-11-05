@@ -1,23 +1,34 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { STRATEGIC_ROADMAP, REPORT_METADATA } from '../data/reportData';
+import {
+  staggerContainer,
+  fadeInUp,
+  defaultViewport,
+} from '../utils/animationVariants';
 
 export const RoadmapGratitudeSection: React.FC = () => {
   return (
     <section className="relative min-h-screen py-24 px-4 sm:px-8 lg:px-12 flex flex-col justify-center border-t border-[#243324]/10 dark:border-white/10 bg-white dark:bg-[#131D12] text-[#243324] dark:text-[#F4EFE6] transition-colors duration-400">
       <div className="max-w-6xl mx-auto w-full space-y-20">
-        {/* Section Headline */}
-        <div className="space-y-4 max-w-4xl">
-          <p className="text-sm font-medium tracking-wide text-[#657351] dark:text-[#A3B59E]">
+        {/* Section Headline - Fluid Staggered Reveal */}
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={defaultViewport}
+          className="space-y-4 max-w-4xl"
+        >
+          <motion.p variants={fadeInUp} className="text-sm font-medium tracking-wide text-[#657351] dark:text-[#A3B59E]">
             Strategic Horizons
-          </p>
-          <h2 className="font-display text-4xl sm:text-6xl lg:text-7xl text-[#1F2B1D] dark:text-[#F4EFE6] font-normal leading-[1.02] tracking-tight">
+          </motion.p>
+          <motion.h2 variants={fadeInUp} className="font-display text-4xl sm:text-6xl lg:text-7xl text-[#1F2B1D] dark:text-[#F4EFE6] font-normal leading-[1.02] tracking-tight">
             Our 2027 vision for a greener, wilder London.
-          </h2>
-          <p className="text-lg sm:text-xl text-[#4A5D44] dark:text-[#CBD7C7] font-light leading-relaxed">
+          </motion.h2>
+          <motion.p variants={fadeInUp} className="text-lg sm:text-xl text-[#4A5D44] dark:text-[#CBD7C7] font-light leading-relaxed">
             Four key commitments to expand bio-corridors into underserved neighborhoods and launch accredited green apprenticeships.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
         {/* 4 Strategic Pillars - Sandstone Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">

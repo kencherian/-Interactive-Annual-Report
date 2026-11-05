@@ -2,6 +2,11 @@ import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { REPORT_METADATA } from '../data/reportData';
 import { IMAGES } from '../assets/images';
+import {
+  staggerContainer,
+  fadeInUp,
+  defaultViewport,
+} from '../utils/animationVariants';
 
 export const EducationSection: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -18,18 +23,24 @@ export const EducationSection: React.FC = () => {
       className="relative min-h-screen py-24 px-4 sm:px-8 lg:px-12 flex flex-col justify-center border-t border-[#243324]/10 dark:border-white/10 bg-[#F5F2EB] dark:bg-[#182417] text-[#243324] dark:text-[#F4EFE6] transition-colors duration-400"
     >
       <div className="max-w-6xl mx-auto w-full space-y-16">
-        {/* Headline */}
-        <div className="space-y-4 max-w-4xl">
-          <p className="text-sm font-medium tracking-wide text-[#657351] dark:text-[#A3B59E]">
+        {/* Headline - Fluid Staggered Reveal */}
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={defaultViewport}
+          className="space-y-4 max-w-4xl"
+        >
+          <motion.p variants={fadeInUp} className="text-sm font-medium tracking-wide text-[#657351] dark:text-[#A3B59E]">
             Inspiring Young Nature Lovers
-          </p>
-          <h2 className="font-display text-4xl sm:text-6xl lg:text-7xl text-[#1F2B1D] dark:text-[#F4EFE6] font-normal leading-[1.02] tracking-tight">
+          </motion.p>
+          <motion.h2 variants={fadeInUp} className="font-display text-4xl sm:text-6xl lg:text-7xl text-[#1F2B1D] dark:text-[#F4EFE6] font-normal leading-[1.02] tracking-tight">
             Classrooms without ceilings inspire London’s future ecologists.
-          </h2>
-          <p className="text-lg sm:text-xl text-[#4A5D44] dark:text-[#CBD7C7] font-light leading-relaxed">
+          </motion.h2>
+          <motion.p variants={fadeInUp} className="text-lg sm:text-xl text-[#4A5D44] dark:text-[#CBD7C7] font-light leading-relaxed">
             By installing safe observation viewports on school rooftops, students across Hammersmith and Camden study colony genetics and botany in living laboratories.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
         {/* Visual & Education Metrics */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
