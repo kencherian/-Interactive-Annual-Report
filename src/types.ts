@@ -20,6 +20,7 @@ export interface RooftopSite {
   isKeyStory?: boolean;
   storyNote?: string;
   addressSnippet?: string;
+  expansionYear?: number; // 2023, 2024, 2025, or 2026
 }
 
 export interface SectorImpact {

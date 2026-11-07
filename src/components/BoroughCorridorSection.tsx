@@ -166,25 +166,14 @@ export const BoroughCorridorSection: React.FC = () => {
               </button>
             </div>
 
-            {/* Right-Aligned Zoom Controls */}
+            {/* Right-Aligned D3 Engine Badge */}
             {viewMode === 'map' && (
-              <div className="flex items-center bg-white/90 dark:bg-[#202E1E] backdrop-blur-md rounded-2xl border border-[#243324]/15 dark:border-white/15 p-1 shadow-2xs gap-1">
-                <button
-                  onClick={handleZoomIn}
-                  className="p-1.5 text-[#243324] dark:text-[#F4EFE6] hover:bg-[#F5F2EB] dark:hover:bg-[#2A3D28] rounded-xl transition-colors cursor-pointer"
-                  title="Zoom In"
-                  aria-label="Zoom In"
-                >
-                  <ZoomIn className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={handleZoomOut}
-                  className="p-1.5 text-[#243324] dark:text-[#F4EFE6] hover:bg-[#F5F2EB] dark:hover:bg-[#2A3D28] rounded-xl transition-colors cursor-pointer"
-                  title="Zoom Out"
-                  aria-label="Zoom Out"
-                >
-                  <ZoomOut className="w-4 h-4" />
-                </button>
+              <div className="flex items-center gap-2 text-xs text-[#657351] dark:text-[#A3B59E]">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/90 dark:bg-[#202E1E] border border-[#243324]/12 dark:border-white/12 shadow-2xs">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="font-semibold text-[#1F2B1D] dark:text-[#F4EFE6]">D3.js Spatial Engine</span>
+                  <span className="hidden sm:inline text-black/40 dark:text-white/40">• Timeline & Density</span>
+                </span>
               </div>
             )}
           </div>
@@ -204,9 +193,6 @@ export const BoroughCorridorSection: React.FC = () => {
                     selectedBoroughName={selectedBorough}
                     onSelectBorough={handleSelectBoroughFromMap}
                     onHoverBorough={setHoveredBorough}
-                    zoomLevel={zoomLevel}
-                    onZoomIn={handleZoomIn}
-                    onZoomOut={handleZoomOut}
                   />
                 </motion.div>
               ) : (
