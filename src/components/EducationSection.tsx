@@ -20,6 +20,7 @@ export const EducationSection: React.FC = () => {
   return (
     <section
       ref={containerRef}
+      id="education-youth"
       className="relative min-h-screen py-24 px-4 sm:px-8 lg:px-12 flex flex-col justify-center border-t border-[#243324]/10 dark:border-white/10 bg-[#F5F2EB] dark:bg-[#182417] text-[#243324] dark:text-[#F4EFE6] transition-colors duration-400"
     >
       <div className="max-w-6xl mx-auto w-full space-y-16">
