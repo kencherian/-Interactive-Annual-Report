@@ -1,31 +1,38 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { STRATEGIC_ROADMAP, REPORT_METADATA } from '../data/reportData';
-import {
-  staggerContainer,
-  fadeInUp,
-  defaultViewport,
-} from '../utils/animationVariants';
+import { useSectionReveal } from '../hooks/useSectionReveal';
 
 export const RoadmapGratitudeSection: React.FC = () => {
+  const { ref: headerRef, containerVariants, itemVariants } = useSectionReveal<HTMLDivElement>({
+    distance: 24,
+    staggerChildren: 0.12,
+  });
+
+  const { motionProps: founderMotionProps } = useSectionReveal<HTMLDivElement>({
+    distance: 24,
+    duration: 0.8,
+  });
+
   return (
     <section id="strategic-horizons" className="relative min-h-screen py-24 px-4 sm:px-8 lg:px-12 flex flex-col justify-center border-t border-[#243324]/10 dark:border-white/10 bg-white dark:bg-[#131D12] text-[#243324] dark:text-[#F4EFE6] transition-colors duration-400">
       <div className="max-w-6xl mx-auto w-full space-y-20">
-        {/* Section Headline - Fluid Staggered Reveal */}
+        {/* Section Headline - Fluid Staggered Reveal via useSectionReveal hook */}
         <motion.div
-          variants={staggerContainer}
+          ref={headerRef}
+          variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={defaultViewport}
+          viewport={{ once: true, amount: 0.2 }}
           className="space-y-4 max-w-4xl"
         >
-          <motion.p variants={fadeInUp} className="text-sm font-medium tracking-wide text-[#657351] dark:text-[#A3B59E]">
+          <motion.p variants={itemVariants} className="text-sm font-medium tracking-wide text-[#657351] dark:text-[#A3B59E]">
             Strategic Horizons
           </motion.p>
-          <motion.h2 variants={fadeInUp} className="font-display text-4xl sm:text-6xl lg:text-7xl text-[#1F2B1D] dark:text-[#F4EFE6] font-normal leading-[1.02] tracking-tight">
+          <motion.h2 variants={itemVariants} className="font-display text-4xl sm:text-6xl lg:text-7xl text-[#1F2B1D] dark:text-[#F4EFE6] font-normal leading-[1.02] tracking-tight">
             Our 2027 vision for a greener, wilder London.
           </motion.h2>
-          <motion.p variants={fadeInUp} className="text-lg sm:text-xl text-[#4A5D44] dark:text-[#CBD7C7] font-light leading-relaxed">
+          <motion.p variants={itemVariants} className="text-lg sm:text-xl text-[#4A5D44] dark:text-[#CBD7C7] font-light leading-relaxed">
             Four key commitments to expand bio-corridors into underserved neighborhoods and launch accredited green apprenticeships.
           </motion.p>
         </motion.div>
@@ -66,7 +73,10 @@ export const RoadmapGratitudeSection: React.FC = () => {
         </div>
 
         {/* Founder Letter / Closing Statement */}
-        <div className="p-10 sm:p-14 rounded-[2.5rem] sm:rounded-[3.5rem] bg-[#1F2B1D] dark:bg-[#1E2E1D] text-white shadow-xl space-y-8 border border-transparent dark:border-white/10 transition-colors duration-400">
+        <motion.div
+          {...founderMotionProps}
+          className="p-10 sm:p-14 rounded-[2.5rem] sm:rounded-[3.5rem] bg-[#1F2B1D] dark:bg-[#1E2E1D] text-white shadow-xl space-y-8 border border-transparent dark:border-white/10 transition-colors duration-400"
+        >
           <div className="max-w-3xl space-y-6">
             <blockquote className="font-display text-2xl sm:text-4xl text-white dark:text-[#F4EFE6] font-light leading-snug">
               “{REPORT_METADATA.founderQuote}”
@@ -76,7 +86,7 @@ export const RoadmapGratitudeSection: React.FC = () => {
               <p className="text-sm text-white/70 dark:text-[#F4EFE6]/70 font-light">{REPORT_METADATA.founderTitle}</p>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Footer */}
         <footer className="pt-8 border-t border-[#243324]/10 dark:border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#657351] dark:text-[#A3B59E] font-light">
