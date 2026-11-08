@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { STRATEGIC_ROADMAP, REPORT_METADATA } from '../data/reportData';
 import { useSectionReveal } from '../hooks/useSectionReveal';
+import { TermTooltip } from './TermTooltip';
 
 export const RoadmapGratitudeSection: React.FC = () => {
   const { ref: headerRef, containerVariants, itemVariants } = useSectionReveal<HTMLDivElement>({
@@ -33,7 +34,7 @@ export const RoadmapGratitudeSection: React.FC = () => {
             Our 2027 vision for a greener, wilder London.
           </motion.h2>
           <motion.p variants={itemVariants} className="text-lg sm:text-xl text-[#4A5D44] dark:text-[#CBD7C7] font-light leading-relaxed">
-            Four key commitments to expand bio-corridors into underserved neighborhoods and launch accredited green apprenticeships.
+            Four key commitments to expand <TermTooltip term="bio-corridors">bio-corridors</TermTooltip> into underserved neighborhoods and launch accredited <TermTooltip term="green-apprenticeships">green apprenticeships</TermTooltip>.
           </motion.p>
         </motion.div>
 

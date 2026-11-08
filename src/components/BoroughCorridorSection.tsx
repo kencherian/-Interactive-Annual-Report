@@ -5,6 +5,7 @@ import { AnimatedNumber } from './AnimatedNumber';
 import { BOROUGHS_DATA, REPORT_METADATA } from '../data/reportData';
 import { BOROUGH_METRICS } from '../data/londonMapData';
 import { LondonPollinatorMap } from './LondonPollinatorMap';
+import { TermTooltip } from './TermTooltip';
 import {
   staggerContainer,
   fadeInUp,
@@ -119,13 +120,13 @@ export const BoroughCorridorSection: React.FC = () => {
           className="space-y-4 max-w-3xl"
         >
           <motion.p variants={fadeInUp} className="text-sm font-medium tracking-wide text-[#657351] dark:text-[#A3B59E]">
-            Ecological Connectivity & Corridors
+            Ecological Connectivity & <TermTooltip term="bio-corridors">Corridors</TermTooltip>
           </motion.p>
           <motion.h2 variants={fadeInUp} className="font-display text-4xl sm:text-5xl lg:text-6xl text-[#1F2B1D] dark:text-[#F4EFE6] font-normal leading-[1.05] tracking-tight">
-            London’s fragmented rooftops are now a continuous pollinator highway.
+            London’s fragmented rooftops are now a continuous <TermTooltip term="bio-corridors">pollinator highway</TermTooltip>.
           </motion.h2>
           <motion.p variants={fadeInUp} className="text-base sm:text-lg text-[#4A5D44] dark:text-[#D2CBBF] font-light leading-relaxed">
-            By situating wildflower meadows within 2 km of royal parks and river corridors, 194 active hives connect 11 municipal boroughs into safe foraging networks.
+            By situating wildflower meadows within 2 km of royal parks and river corridors, <TermTooltip term="apiary">194 active hives</TermTooltip> connect 11 municipal boroughs into safe <TermTooltip term="foraging-radius">foraging networks</TermTooltip>.
           </motion.p>
         </motion.div>
 

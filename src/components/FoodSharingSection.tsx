@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform } from 'motion/react';
 import { AnimatedNumber } from './AnimatedNumber';
 import { REPORT_METADATA } from '../data/reportData';
 import { IMAGES } from '../assets/images';
+import { TermTooltip } from './TermTooltip';
 import {
   staggerContainer,
   fadeInUp,
@@ -35,13 +36,13 @@ export const FoodSharingSection: React.FC = () => {
           className="space-y-4 max-w-4xl"
         >
           <motion.p variants={fadeInUp} className="text-sm font-medium tracking-wide text-[#657351] dark:text-[#A3B59E]">
-            Food Equity
+            <TermTooltip term="food-equity">Food Equity</TermTooltip>
           </motion.p>
           <motion.h2 variants={fadeInUp} className="font-display text-4xl sm:text-6xl lg:text-7xl text-[#1F2B1D] dark:text-[#F4EFE6] font-normal leading-[1.02] tracking-tight">
-            Turning pure London honey into nourishing food for local neighbours.
+            Turning pure <TermTooltip term="apiculture">London honey</TermTooltip> into nourishing food for local neighbours.
           </motion.h2>
           <motion.p variants={fadeInUp} className="text-lg sm:text-xl text-[#4A5D44] dark:text-[#CBD7C7] font-light leading-relaxed">
-            Rather than selling honey exclusively at high-end boutiques, our community harvest model routes thousands of jars directly to Southwark, Islington, and Hackney food pantries.
+            Rather than selling honey exclusively at high-end boutiques, our community harvest model routes thousands of jars directly to Southwark, Islington, and Hackney <TermTooltip term="food-equity">food pantries</TermTooltip>.
           </motion.p>
         </motion.div>
 

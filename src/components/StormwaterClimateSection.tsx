@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { REPORT_METADATA } from '../data/reportData';
 import { IMAGES } from '../assets/images';
+import { TermTooltip } from './TermTooltip';
 import {
   staggerContainer,
   fadeInUp,
@@ -37,10 +38,10 @@ export const StormwaterClimateSection: React.FC = () => {
             Climate Resilience
           </motion.p>
           <motion.h2 variants={fadeInUp} className="font-display text-4xl sm:text-6xl lg:text-7xl text-[#1F2B1D] dark:text-[#F4EFE6] font-normal leading-[1.02] tracking-tight">
-            Urban sponge roofs absorb stormwater before it overwhelms London.
+            <TermTooltip term="urban-sponge-roofs">Urban sponge roofs</TermTooltip> absorb <TermTooltip term="stormwater-attenuation">stormwater</TermTooltip> before it overwhelms London.
           </motion.h2>
           <motion.p variants={fadeInUp} className="text-lg sm:text-xl text-[#4A5D44] dark:text-[#CBD7C7] font-light leading-relaxed">
-            By planting living soil and hardy wildflowers over bare rooftop asphalt, our 52 sanctuaries act as natural rain sponges and cool the surrounding city air.
+            By planting <TermTooltip term="extensive-green-roof">living soil</TermTooltip> and hardy wildflowers over bare rooftop asphalt, our 52 sanctuaries act as natural rain sponges and cool the surrounding <TermTooltip term="urban-heat-island">city air</TermTooltip>.
           </motion.p>
         </motion.div>
 
@@ -57,7 +58,7 @@ export const StormwaterClimateSection: React.FC = () => {
             <div className="absolute inset-0 bg-gradient-to-t from-[#1F2B1D]/80 via-transparent to-transparent pointer-events-none z-10" />
             <div className="absolute bottom-8 left-8 right-8 text-white z-20">
               <p className="font-display text-2xl sm:text-3xl font-light">
-                Lowering building thermal gain by 3.8°C during peak summer heat waves.
+                Lowering building <TermTooltip term="thermal-gain">thermal gain</TermTooltip> by 3.8°C during peak summer heat waves.
               </p>
             </div>
           </div>

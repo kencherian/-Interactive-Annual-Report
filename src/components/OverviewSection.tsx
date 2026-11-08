@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform } from 'motion/react';
 import { AnimatedNumber } from './AnimatedNumber';
 import { REPORT_METADATA } from '../data/reportData';
 import { IMAGES } from '../assets/images';
+import { TermTooltip } from './TermTooltip';
 import {
   staggerContainer,
   fadeInUp,
@@ -84,7 +85,9 @@ export const OverviewSection: React.FC = () => {
               <div className="font-display text-4xl sm:text-6xl text-[#1F2B1D] dark:text-[#F4EFE6] font-light tracking-tight">
                 <AnimatedNumber value={REPORT_METADATA.totalHives} />
               </div>
-              <p className="text-base text-[#4A5D44] dark:text-[#CBD7C7] font-medium">Active Rooftop Apiaries</p>
+              <p className="text-base text-[#4A5D44] dark:text-[#CBD7C7] font-medium">
+                <TermTooltip term="apiary">Active Rooftop Apiaries</TermTooltip>
+              </p>
               <p className="text-sm text-[#657351] dark:text-[#A3B59E] font-light">
                 Maintained across 52 partner buildings
               </p>
@@ -94,7 +97,9 @@ export const OverviewSection: React.FC = () => {
               <div className="font-display text-4xl sm:text-6xl text-[#1F2B1D] dark:text-[#F4EFE6] font-light tracking-tight">
                 <AnimatedNumber value={17889} suffix=" m²" />
               </div>
-              <p className="text-base text-[#4A5D44] dark:text-[#CBD7C7] font-medium">Engineered Wildflower Meadow</p>
+              <p className="text-base text-[#4A5D44] dark:text-[#CBD7C7] font-medium">
+                <TermTooltip term="extensive-green-roof">Engineered Wildflower Meadow</TermTooltip>
+              </p>
               <p className="text-sm text-[#657351] dark:text-[#A3B59E] font-light">
                 Rich with 24+ native species per site
               </p>

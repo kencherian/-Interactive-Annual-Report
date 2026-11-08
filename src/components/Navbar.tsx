@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from 'motion/react';
-import { Sun, Moon, ChevronDown, Check } from 'lucide-react';
+import { Sun, Moon, ChevronDown, Check, BookOpen } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import { GlossaryModal } from './GlossaryModal';
 
 export interface NavSection {
   id: string;
@@ -26,6 +27,7 @@ export const Navbar: React.FC = () => {
   const [isScrolledPastHero, setIsScrolledPastHero] = useState(false);
   const [activeSectionId, setActiveSectionId] = useState<string>('hero-section');
   const [isMobileTOCOpen, setIsMobileTOCOpen] = useState(false);
+  const [isGlossaryOpen, setIsGlossaryOpen] = useState(false);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
 
   // Track hero scroll threshold for theme button styling
@@ -217,8 +219,24 @@ export const Navbar: React.FC = () => {
         </AnimatePresence>
       </div>
 
-      {/* Right Controls: Year Badge & Sun/Moon Toggle */}
-      <div className="pointer-events-auto flex items-center gap-2.5 sm:gap-3.5">
+      {/* Right Controls: Glossary, Year Badge & Sun/Moon Toggle */}
+      <div className="pointer-events-auto flex items-center gap-2 sm:gap-3">
+        {/* Glossary Quick Reference Modal Trigger */}
+        <button
+          type="button"
+          onClick={() => setIsGlossaryOpen(true)}
+          aria-label="Open Environmental Terminology Glossary"
+          title="Browse 15 environmental & urban planning definitions"
+          className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full border backdrop-blur-md transition-all duration-200 cursor-pointer shadow-sm text-xs font-medium focus:outline-none focus:ring-2 ${
+            isScrolledPastHero
+              ? 'bg-white/80 dark:bg-[#1A2819]/85 border-[#243324]/12 dark:border-white/12 text-[#1F2B1D] dark:text-[#F4EFE6] hover:bg-white dark:hover:bg-[#253924] focus:ring-[#243324]/20'
+              : 'bg-black/25 hover:bg-black/40 border-white/20 text-white focus:ring-white/40'
+          }`}
+        >
+          <BookOpen className="w-3.5 h-3.5 text-[#54734D] dark:text-[#A3B59E]" />
+          <span className="hidden sm:inline">Glossary</span>
+        </button>
+
         <span
           className={`text-xs font-semibold tracking-widest uppercase select-none hidden sm:inline-block transition-colors duration-300 ${
             isScrolledPastHero
@@ -259,7 +277,7 @@ export const Navbar: React.FC = () => {
                 key="moon-icon"
                 initial={{ rotate: 90, scale: 0.7, opacity: 0 }}
                 animate={{ rotate: 0, scale: 1, opacity: 1 }}
-                exit={{ rotate: -90, scale: 0.7, opacity: 0 }}
+                exit={{ rotate: 90, scale: 0.7, opacity: 0 }}
                 transition={{ duration: 0.18 }}
                 className="flex items-center justify-center"
               >
@@ -269,6 +287,12 @@ export const Navbar: React.FC = () => {
           </AnimatePresence>
         </button>
       </div>
+
+      {/* Terminology Glossary Modal */}
+      <GlossaryModal
+        isOpen={isGlossaryOpen}
+        onClose={() => setIsGlossaryOpen(false)}
+      />
     </header>
   );
 };

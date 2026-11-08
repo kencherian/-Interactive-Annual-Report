@@ -52,3 +52,13 @@ export interface NarrativeStory {
   quote?: string;
   quoteAuthor?: string;
 }
+
+export interface GlossaryTerm {
+  id: string;
+  term: string;
+  aliases?: string[];
+  category: 'Urban Ecology' | 'Hydrology & Climate' | 'Apiculture' | 'Architecture & Planning' | 'Social Impact';
+  definition: string;
+  projectContext?: string;
+  metricReference?: string;
+}

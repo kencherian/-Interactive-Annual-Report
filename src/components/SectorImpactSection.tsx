@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { SECTOR_DATA } from '../data/reportData';
 import { RooftopCalculator } from './RooftopCalculator';
 import { BiodiversityChart } from './BiodiversityChart';
+import { TermTooltip } from './TermTooltip';
 import {
   staggerContainer,
   fastStaggerContainer,
@@ -29,10 +30,10 @@ export const SectorImpactSection: React.FC = () => {
             Sector Ecosystem
           </motion.p>
           <motion.h2 variants={fadeInUp} className="font-display text-4xl sm:text-6xl lg:text-7xl text-[#1F2B1D] dark:text-[#F4EFE6] font-normal leading-[1.02] tracking-tight">
-            Commercial rooftops fund educational and civic biodiversity.
+            Commercial rooftops fund educational and civic <TermTooltip term="biodiversity-net-gain">biodiversity</TermTooltip>.
           </motion.h2>
           <motion.p variants={fadeInUp} className="text-lg sm:text-xl text-[#4A5D44] dark:text-[#CBD7C7] font-light leading-relaxed">
-            Corporate office partnerships and luxury hotel apiaries generated £280,500 in sponsorships and 2.6 tonnes of honey, directly funding outdoor learning labs for schools and shared neighborhood gardens.
+            Corporate office partnerships and luxury hotel <TermTooltip term="apiary">apiaries</TermTooltip> generated £280,500 in sponsorships and 2.6 tonnes of honey, directly funding outdoor learning labs for schools and shared neighborhood gardens.
           </motion.p>
         </motion.div>
 

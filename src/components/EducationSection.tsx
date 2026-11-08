@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { REPORT_METADATA } from '../data/reportData';
 import { IMAGES } from '../assets/images';
+import { TermTooltip } from './TermTooltip';
 import {
   staggerContainer,
   fadeInUp,
@@ -39,7 +40,7 @@ export const EducationSection: React.FC = () => {
             Classrooms without ceilings inspire London’s future ecologists.
           </motion.h2>
           <motion.p variants={fadeInUp} className="text-lg sm:text-xl text-[#4A5D44] dark:text-[#CBD7C7] font-light leading-relaxed">
-            By installing safe observation viewports on school rooftops, students across Hammersmith and Camden study colony genetics and botany in living laboratories.
+            By installing safe observation viewports on school rooftops, students across Hammersmith and Camden study <TermTooltip term="colony-genetics">colony genetics</TermTooltip> and botany in living laboratories.
           </motion.p>
         </motion.div>
 
