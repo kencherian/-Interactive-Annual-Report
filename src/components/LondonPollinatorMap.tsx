@@ -13,10 +13,13 @@ import {
   TrendingUp,
   Compass,
   Info,
+  Building2,
+  Flower2,
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import {
   ACTIVE_BOROUGHS,
+  LONDON_BOROUGHS,
   RIVER_THAMES_PATH,
   ALL_ROOFTOP_SITES,
   MAP_DIMENSIONS,
@@ -89,6 +92,66 @@ export const LondonPollinatorMap: React.FC<LondonPollinatorMapProps> = ({
   const svgRef = useRef<SVGSVGElement>(null);
   const zoomGroupRef = useRef<SVGGElement>(null);
   const zoomBehaviorRef = useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null);
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+
+  // Mouse coordinate tracking for popup positioning
+  const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(null);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!mapContainerRef.current) return;
+    const rect = mapContainerRef.current.getBoundingClientRect();
+    setMousePos({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  };
+
+  const handleContainerMouseLeave = () => {
+    setMousePos(null);
+    setHoveredSite(null);
+    setHoveredBoroughId(null);
+    if (onHoverBorough) onHoverBorough(null);
+  };
+
+  // Clamped popup position relative to container
+  const popupPos = useMemo(() => {
+    if (!mousePos || !mapContainerRef.current) return { left: 0, top: 0 };
+    const containerWidth = mapContainerRef.current.clientWidth || 800;
+    const containerHeight = mapContainerRef.current.clientHeight || 650;
+    const tooltipWidth = 310;
+    const tooltipHeight = 185;
+
+    let left = mousePos.x + 18;
+    if (left + tooltipWidth > containerWidth - 16) {
+      left = mousePos.x - tooltipWidth - 18;
+    }
+    left = Math.max(12, Math.min(containerWidth - tooltipWidth - 12, left));
+
+    let top = mousePos.y - tooltipHeight / 2;
+    if (top < 12) top = 12;
+    if (top + tooltipHeight > containerHeight - 12) {
+      top = containerHeight - tooltipHeight - 12;
+    }
+
+    return { left, top };
+  }, [mousePos]);
+
+  const hoveredBorough = useMemo(() => {
+    if (!hoveredBoroughId) return null;
+    return ACTIVE_BOROUGHS.find((b) => b.id === hoveredBoroughId) || null;
+  }, [hoveredBoroughId]);
+
+  const hoveredBoroughMetrics = useMemo(() => {
+    if (!hoveredBorough) return null;
+    return (
+      BOROUGH_METRICS[hoveredBorough.name.toLowerCase()] || {
+        sites: hoveredBorough.sites,
+        hives: hoveredBorough.hives,
+        wildflowerAreaSqM: 1000,
+        jarsDonated: 150,
+      }
+    );
+  }, [hoveredBorough]);
 
   // Enrich sites with expansion years
   const enrichedSites = useMemo(() => {
@@ -347,7 +410,12 @@ export const LondonPollinatorMap: React.FC<LondonPollinatorMapProps> = ({
       </div>
 
       {/* Main Interactive SVG Canvas rendered with D3.js */}
-      <div className="relative flex-1 w-full h-full cursor-grab active:cursor-grabbing overflow-hidden">
+      <div
+        ref={mapContainerRef}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleContainerMouseLeave}
+        className="relative flex-1 w-full h-full cursor-grab active:cursor-grabbing overflow-hidden"
+      >
         <svg
           ref={svgRef}
           viewBox={MAP_DIMENSIONS.viewBox}
@@ -375,7 +443,22 @@ export const LondonPollinatorMap: React.FC<LondonPollinatorMapProps> = ({
 
           {/* D3 Zoomable Container Group */}
           <g ref={zoomGroupRef} id="d3-zoom-container">
-            {/* 1. Borough Polygons colored by D3 Choropleth Scale */}
+            {/* 0. Context: Non-Apiary Greater London Boroughs (Muted Ghost Outlines) */}
+            <g id="d3-inactive-boroughs" className="pointer-events-none opacity-30 dark:opacity-20 select-none">
+              {LONDON_BOROUGHS.filter((b) => !b.isActive).map((borough) => (
+                <path
+                  key={borough.id}
+                  d={borough.svgPath}
+                  fill={isDark ? '#141E13' : '#EAE6DC'}
+                  stroke={isDark ? '#263B24' : '#CBC5B4'}
+                  strokeWidth="0.45"
+                  strokeLinejoin="round"
+                  strokeDasharray="1.5 2"
+                />
+              ))}
+            </g>
+
+            {/* 1. Highlighted Established Apiary Boroughs */}
             <g id="d3-boroughs">
               {ACTIVE_BOROUGHS.map((borough) => {
                 const isSelected = selectedBoroughId === borough.id;
@@ -516,6 +599,44 @@ export const LondonPollinatorMap: React.FC<LondonPollinatorMapProps> = ({
                   >
                     {displayName}
                   </text>
+                );
+              })}
+            </g>
+
+            {/* 4b. Centroid Hive Badges for Active Boroughs on Hover/Selection */}
+            <g id="d3-borough-centroid-badges" className="pointer-events-none select-none">
+              {ACTIVE_BOROUGHS.map((borough) => {
+                const isSelected = selectedBoroughId === borough.id;
+                const isHovered = hoveredBoroughId === borough.id;
+                if (!isSelected && !isHovered) return null;
+
+                return (
+                  <g
+                    key={`centroid-badge-${borough.id}`}
+                    transform={`translate(${borough.centroid.x}, ${borough.centroid.y - 12})`}
+                  >
+                    <rect
+                      x="-20"
+                      y="-7"
+                      width="40"
+                      height="14"
+                      rx="7"
+                      fill={isDark ? '#0D150C' : '#FFFFFF'}
+                      stroke={isDark ? '#85E7B7' : '#1F2B1D'}
+                      strokeWidth="0.9"
+                      className="drop-shadow-sm"
+                    />
+                    <text
+                      x="0"
+                      y="1.5"
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      fill={isDark ? '#85E7B7' : '#1F2B1D'}
+                      className="font-mono text-[5.8px] font-bold"
+                    >
+                      {borough.hives} hives
+                    </text>
+                  </g>
                 );
               })}
             </g>
@@ -677,31 +798,114 @@ export const LondonPollinatorMap: React.FC<LondonPollinatorMapProps> = ({
           )}
         </AnimatePresence>
 
-        {/* Hover Tooltip for Sites */}
+        {/* Hover Data Popup: Specific Rooftop Apiary Location */}
         <AnimatePresence>
-          {hoveredSite && !selectedSite && (
+          {hoveredSite && mousePos && !selectedSite && (
             <motion.div
-              initial={{ opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className="absolute pointer-events-none z-30 bg-[#1F2B1D] dark:bg-[#0D150C] text-white px-3 py-2 rounded-xl text-xs shadow-xl space-y-0.5 border border-white/15"
+              initial={{ opacity: 0, scale: 0.94, y: 4 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.94, y: 4 }}
+              transition={{ duration: 0.16, ease: [0.22, 1, 0.36, 1] }}
+              className="absolute pointer-events-none z-30 w-72 sm:w-80 p-4 rounded-2xl bg-[#1F2B1D]/95 dark:bg-[#0D150C]/95 text-white backdrop-blur-xl border border-white/20 shadow-2xl space-y-2.5"
               style={{
-                left: `${((hoveredSite.x - MAP_DIMENSIONS.minX) / MAP_DIMENSIONS.width) * 100}%`,
-                top: `${((hoveredSite.y - MAP_DIMENSIONS.minY) / MAP_DIMENSIONS.height) * 100}%`,
-                transform: 'translate(-50%, -130%)',
+                left: popupPos.left,
+                top: popupPos.top,
               }}
             >
-              <div className="font-semibold text-white">{hoveredSite.name}</div>
-              <div className="flex items-center justify-between gap-3 text-[11px] text-[#CBD7C7]">
-                <span>
-                  {hoveredSite.buildingType} • {hoveredSite.borough}
-                </span>
-                <span className="font-semibold text-amber-300">
-                  Est. {getSiteExpansionYear(hoveredSite.id)}
-                </span>
+              {/* Header with Location & Hive Count Badge */}
+              <div className="flex items-start justify-between gap-2.5 border-b border-white/10 pb-2">
+                <div className="space-y-0.5">
+                  <div className="flex items-center gap-1.5 text-[10px] font-semibold tracking-wider uppercase text-emerald-300">
+                    <Building2 className="w-3 h-3" />
+                    <span>{hoveredSite.buildingType}</span>
+                    <span>•</span>
+                    <span className="text-white/80">{hoveredSite.borough}</span>
+                  </div>
+                  <h5 className="font-display text-base font-normal text-white leading-tight">
+                    {hoveredSite.name}
+                  </h5>
+                </div>
+                {/* Number of Hives Per Location */}
+                <div className="px-2.5 py-1 rounded-xl bg-amber-500/25 border border-amber-400/40 text-amber-300 text-center shrink-0">
+                  <span className="block font-display text-lg font-bold leading-none">{hoveredSite.hives}</span>
+                  <span className="text-[9px] font-semibold uppercase tracking-wider">Hives</span>
+                </div>
               </div>
-              <div className="text-[11px] text-emerald-300 font-medium">
-                {hoveredSite.hives} Hives • {hoveredSite.wildflowerAreaSqM} m² Meadow
+
+              {/* Location Key Metrics */}
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="p-2 rounded-xl bg-white/5 border border-white/5 space-y-0.5">
+                  <span className="text-[10px] text-white/60 block">Wildflower Meadow</span>
+                  <span className="font-medium text-emerald-300">{hoveredSite.wildflowerAreaSqM} m²</span>
+                </div>
+                <div className="p-2 rounded-xl bg-white/5 border border-white/5 space-y-0.5">
+                  <span className="text-[10px] text-white/60 block">Established</span>
+                  <span className="font-medium text-amber-300">Est. {getSiteExpansionYear(hoveredSite.id)}</span>
+                </div>
+              </div>
+
+              {/* Stormwater and Honey Harvest Yield */}
+              <div className="flex items-center justify-between text-[11px] text-[#CBD7C7] pt-0.5 border-t border-white/10">
+                <span className="flex items-center gap-1">
+                  <Droplets className="w-3 h-3 text-sky-400 shrink-0" />
+                  <span>{hoveredSite.rainwaterL.toLocaleString()} L rain absorbed</span>
+                </span>
+                <span className="text-white/50 text-[10px]">Click to inspect site</span>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Hover Data Popup: Specific Established Borough */}
+        <AnimatePresence>
+          {hoveredBorough && hoveredBoroughMetrics && mousePos && !hoveredSite && !selectedSite && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.94, y: 4 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.94, y: 4 }}
+              transition={{ duration: 0.16, ease: [0.22, 1, 0.36, 1] }}
+              className="absolute pointer-events-none z-30 w-72 sm:w-80 p-4 rounded-2xl bg-[#FBF9F5]/95 dark:bg-[#142314]/95 text-[#243324] dark:text-[#F4EFE6] backdrop-blur-xl border border-[#243324]/15 dark:border-white/15 shadow-2xl space-y-2.5"
+              style={{
+                left: popupPos.left,
+                top: popupPos.top,
+              }}
+            >
+              {/* Header with Borough Name & Total Hives Badge */}
+              <div className="flex items-start justify-between gap-2.5 border-b border-[#243324]/10 dark:border-white/10 pb-2">
+                <div>
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-[#657351] dark:text-[#A3B59E]">
+                    Established Apiary Borough
+                  </span>
+                  <h5 className="font-display text-lg font-medium text-[#1F2B1D] dark:text-[#F4EFE6] leading-tight">
+                    {hoveredBorough.name === 'Hammersmith and Fulham' ? 'Hammersmith & Fulham' : hoveredBorough.name}
+                  </h5>
+                </div>
+                {/* Total Hives in Borough */}
+                <div className="px-2.5 py-1 rounded-xl bg-[#3B4D36]/10 dark:bg-white/10 border border-[#3B4D36]/20 dark:border-white/20 text-[#1F2B1D] dark:text-[#85E7B7] text-center shrink-0">
+                  <span className="block font-display text-lg font-bold leading-none">{hoveredBoroughMetrics.hives}</span>
+                  <span className="text-[9px] font-semibold uppercase tracking-wider">Total Hives</span>
+                </div>
+              </div>
+
+              <p className="text-xs text-[#4A5D44] dark:text-[#CBD7C7] font-light leading-relaxed">
+                {hoveredBorough.description}
+              </p>
+
+              {/* Borough Breakdown Stats */}
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="p-2 rounded-xl bg-black/5 dark:bg-white/5 space-y-0.5">
+                  <span className="text-[10px] text-[#657351] dark:text-[#A3B59E] block">Apiary Locations</span>
+                  <span className="font-semibold text-[#1F2B1D] dark:text-[#F4EFE6]">{hoveredBoroughMetrics.sites} Rooftops</span>
+                </div>
+                <div className="p-2 rounded-xl bg-black/5 dark:bg-white/5 space-y-0.5">
+                  <span className="text-[10px] text-[#657351] dark:text-[#A3B59E] block">Wildflower Living Roof</span>
+                  <span className="font-semibold text-[#1F2B1D] dark:text-[#F4EFE6]">{hoveredBoroughMetrics.wildflowerAreaSqM.toLocaleString()} m²</span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between text-[11px] text-[#657351] dark:text-[#A3B59E] pt-0.5 border-t border-[#243324]/10 dark:border-white/10">
+                <span>{hoveredBoroughMetrics.jarsDonated} Honey Jars Donated</span>
+                <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">Click to focus sites</span>
               </div>
             </motion.div>
           )}

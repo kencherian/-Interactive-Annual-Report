@@ -179,6 +179,36 @@ export const BoroughCorridorSection: React.FC = () => {
             )}
           </div>
 
+          {/* Established Apiary Boroughs Quick-Filter Strip */}
+          {viewMode === 'map' && (
+            <div className="px-5 py-2.5 sm:px-8 border-t border-[#243324]/8 dark:border-white/8 bg-[#F5F2EB]/50 dark:bg-[#182617]/50 flex items-center gap-2 overflow-x-auto text-xs scrollbar-none">
+              <span className="text-[11px] font-semibold text-[#657351] dark:text-[#A3B59E] uppercase tracking-wider shrink-0 flex items-center gap-1 mr-1">
+                <MapPin className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+                <span>Established Apiary Boroughs:</span>
+              </span>
+              {BOROUGHS_DATA.map((b) => {
+                const isSelected = selectedBorough?.toLowerCase() === b.borough.toLowerCase();
+                return (
+                  <button
+                    key={b.borough}
+                    onClick={() => handleSelectBoroughFromMap(isSelected ? null : b.borough)}
+                    className={`px-2.5 py-1 rounded-xl shrink-0 text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
+                      isSelected
+                        ? 'bg-[#1F2B1D] dark:bg-[#344732] text-white dark:text-[#F4EFE6] shadow-xs ring-1 ring-emerald-500'
+                        : 'bg-white dark:bg-[#202E1E] text-[#3B4D36] dark:text-[#CBD7C7] hover:bg-black/5 dark:hover:bg-white/10 border border-[#243324]/10 dark:border-white/10'
+                    }`}
+                    title={`${b.hives} active hives across ${b.sites} rooftop sites in ${b.borough}`}
+                  >
+                    <span>{b.borough}</span>
+                    <span className="px-1.5 py-0.2 rounded-md bg-[#243324]/10 dark:bg-white/15 text-[10px] font-mono font-semibold">
+                      {b.hives} hives
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
           {/* Card Body: Map View or Borough Breakdown List */}
           <div className="relative w-full flex-1 bg-[#FBF9F5] dark:bg-[#152014] transition-colors duration-400">
             <AnimatePresence mode="wait">
