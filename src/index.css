@@ -70,4 +70,197 @@ html {
   scroll-behavior: smooth;
 }
 
+/* =========================================================================
+   SIMPLIFIED HIGH-CONTRAST BLACK-AND-WHITE PRINT & PDF STYLESHEET
+   ========================================================================= */
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 14mm 12mm 16mm 12mm;
+  }
+
+  /* Reset document background & color to pure monochrome */
+  html, body {
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 10pt !important;
+    line-height: 1.45 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    overflow: visible !important;
+  }
+
+  /* Hide interactive web-only chrome */
+  header,
+  nav,
+  #theme-toggle-btn,
+  .print-hide,
+  [data-print-hide="true"],
+  video,
+  button,
+  .recharts-tooltip-wrapper,
+  .glossary-modal {
+    display: none !important;
+  }
+
+  /* Display print-only elements (Cover Page, Full Data Table) */
+  .print-only {
+    display: block !important;
+  }
+
+  /* Force pure black and white, strip shadows and filters */
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+    filter: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  /* Reset parallax and transforms so elements are not clipped */
+  .will-change-transform,
+  [style*="transform"] {
+    transform: none !important;
+  }
+
+  /* Editorial Typography in crisp black */
+  h1, h2, h3, h4, h5, h6, .font-serif, .font-display {
+    color: #000000 !important;
+    font-family: var(--font-serif) !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+
+  p, span, div, li, td, th {
+    color: #111111 !important;
+  }
+
+  /* High-contrast borders */
+  .border, [class*="border-"] {
+    border-color: #000000 !important;
+  }
+
+  /* Cards & containers in print */
+  .rounded-2xl, .rounded-3xl, .rounded-\[2\.5rem\], .rounded-\[3\.5rem\] {
+    border-radius: 4px !important;
+    border: 1px solid #000000 !important;
+    background-color: #ffffff !important;
+  }
+
+  /* Images: grayscale high contrast */
+  img {
+    filter: grayscale(100%) contrast(115%) !important;
+    max-width: 100% !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Hero Section print adaptation (replaced by .print-cover-page) */
+  #hero-section {
+    display: none !important;
+  }
+
+  /* Section breaks & page allocation */
+  #overview-section,
+  #ecological-connectivity,
+  #climate-resilience,
+  #sector-ecosystem,
+  #food-equity,
+  #education-youth,
+  #strategic-horizons {
+    min-height: auto !important;
+    padding-top: 14pt !important;
+    padding-bottom: 14pt !important;
+    page-break-before: always !important;
+    break-before: page !important;
+    background: #ffffff !important;
+  }
+
+  .print-avoid-break,
+  .print-cover-page,
+  blockquote,
+  table,
+  .grid > div {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Links with printable clarity */
+  a {
+    color: #000000 !important;
+    text-decoration: underline !important;
+  }
+
+  /* High contrast SVG text */
+  svg text {
+    fill: #000000 !important;
+  }
+}
+
+/* =========================================================================
+   ON-SCREEN HIGH-CONTRAST BLACK-AND-WHITE PRINT PREVIEW MODE (.print-version)
+   ========================================================================= */
+
+html.print-version {
+  color-scheme: light !important;
+}
+
+html.print-version body {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+html.print-version .print-only {
+  display: block !important;
+}
+
+html.print-version #hero-section {
+  display: none !important;
+}
+
+html.print-version header {
+  top: 42px !important;
+}
+
+html.print-version * {
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+html.print-version h1,
+html.print-version h2,
+html.print-version h3,
+html.print-version h4,
+html.print-version h5 {
+  color: #000000 !important;
+}
+
+html.print-version p,
+html.print-version span,
+html.print-version div {
+  color: #111111;
+}
+
+html.print-version section {
+  background-color: #ffffff !important;
+  border-color: #000000 !important;
+}
+
+html.print-version .rounded-2xl,
+html.print-version .rounded-3xl,
+html.print-version .rounded-\[2\.5rem\],
+html.print-version .rounded-\[3\.5rem\] {
+  background-color: #ffffff !important;
+  border: 1.5px solid #000000 !important;
+}
+
+html.print-version img {
+  filter: grayscale(100%) contrast(110%);
+}
+
+
 

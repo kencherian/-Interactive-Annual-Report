@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from 'motion/react';
-import { Sun, Moon, ChevronDown, Check, BookOpen } from 'lucide-react';
+import { Sun, Moon, ChevronDown, Check, BookOpen, Printer, FileDown } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { GlossaryModal } from './GlossaryModal';
 
@@ -23,12 +23,14 @@ export const NAV_SECTIONS: NavSection[] = [
 
 export const Navbar: React.FC = () => {
   const { scrollY } = useScroll();
-  const { isDark, toggleTheme } = useTheme();
+  const { isDark, toggleTheme, isPrintPreview, togglePrintPreview, triggerPrint } = useTheme();
   const [isScrolledPastHero, setIsScrolledPastHero] = useState(false);
   const [activeSectionId, setActiveSectionId] = useState<string>('hero-section');
   const [isMobileTOCOpen, setIsMobileTOCOpen] = useState(false);
   const [isGlossaryOpen, setIsGlossaryOpen] = useState(false);
+  const [isPrintMenuOpen, setIsPrintMenuOpen] = useState(false);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const printMenuRef = useRef<HTMLDivElement>(null);
 
   // Track hero scroll threshold for theme button styling
   useMotionValueEvent(scrollY, 'change', (latest) => {
@@ -62,11 +64,14 @@ export const Navbar: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close mobile dropdown when clicking outside
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (mobileMenuRef.current && !mobileMenuRef.current.contains(e.target as Node)) {
         setIsMobileTOCOpen(false);
+      }
+      if (printMenuRef.current && !printMenuRef.current.contains(e.target as Node)) {
+        setIsPrintMenuOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -219,8 +224,81 @@ export const Navbar: React.FC = () => {
         </AnimatePresence>
       </div>
 
-      {/* Right Controls: Glossary, Year Badge & Sun/Moon Toggle */}
-      <div className="pointer-events-auto flex items-center gap-2 sm:gap-3">
+      {/* Right Controls: Print, Glossary, Year Badge & Sun/Moon Toggle */}
+      <div className="pointer-events-auto flex items-center gap-2 sm:gap-2.5">
+        {/* High-Contrast Print / PDF Trigger Button */}
+        <div className="relative" ref={printMenuRef}>
+          <button
+            type="button"
+            onClick={() => setIsPrintMenuOpen((prev) => !prev)}
+            aria-label="Print or export high-contrast PDF report"
+            title="Print or export simplified, high-contrast black-and-white report"
+            className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full border backdrop-blur-md transition-all duration-200 cursor-pointer shadow-sm text-xs font-medium focus:outline-none focus:ring-2 ${
+              isPrintPreview
+                ? 'bg-black text-white border-white/50 ring-2 ring-emerald-400'
+                : isScrolledPastHero
+                ? 'bg-white/80 dark:bg-[#1A2819]/85 border-[#243324]/12 dark:border-white/12 text-[#1F2B1D] dark:text-[#F4EFE6] hover:bg-white dark:hover:bg-[#253924] focus:ring-[#243324]/20'
+                : 'bg-black/25 hover:bg-black/40 border-white/20 text-white focus:ring-white/40'
+            }`}
+          >
+            <Printer className="w-3.5 h-3.5 text-[#54734D] dark:text-[#85E7B7]" />
+            <span className="hidden sm:inline">
+              {isPrintPreview ? 'Print Active' : 'Print / PDF'}
+            </span>
+          </button>
+
+          {/* Print Options Dropdown */}
+          <AnimatePresence>
+            {isPrintMenuOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                transition={{ duration: 0.15 }}
+                className="absolute right-0 mt-2 w-64 rounded-2xl bg-white/95 dark:bg-[#1C2C1B]/95 backdrop-blur-xl border border-[#243324]/15 dark:border-white/15 shadow-2xl p-2 z-50 text-left space-y-1"
+              >
+                <div className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-[#657351] dark:text-[#A3B59E] border-b border-[#243324]/10 dark:border-white/10 mb-1">
+                  Print & PDF Export
+                </div>
+
+                <button
+                  onClick={() => {
+                    setIsPrintMenuOpen(false);
+                    triggerPrint();
+                  }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-[#1F2B1D] dark:text-[#F4EFE6] hover:bg-[#F5F2EB] dark:hover:bg-white/10 transition-colors cursor-pointer font-medium"
+                >
+                  <Printer className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                  <div className="text-left">
+                    <div className="font-semibold">Print / Save as PDF</div>
+                    <div className="text-[10px] text-[#657351] dark:text-[#A3B59E] font-light">
+                      High-contrast black & white layout
+                    </div>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setIsPrintMenuOpen(false);
+                    togglePrintPreview();
+                  }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-[#1F2B1D] dark:text-[#F4EFE6] hover:bg-[#F5F2EB] dark:hover:bg-white/10 transition-colors cursor-pointer font-medium"
+                >
+                  <FileDown className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+                  <div className="text-left">
+                    <div className="font-semibold">
+                      {isPrintPreview ? 'Exit B&W Print View' : 'Toggle B&W Print View'}
+                    </div>
+                    <div className="text-[10px] text-[#657351] dark:text-[#A3B59E] font-light">
+                      {isPrintPreview ? 'Return to interactive color mode' : 'Preview monochrome layout on screen'}
+                    </div>
+                  </div>
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
         {/* Glossary Quick Reference Modal Trigger */}
         <button
           type="button"

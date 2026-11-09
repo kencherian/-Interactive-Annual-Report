@@ -1,10 +1,13 @@
 import React from 'react';
 import { motion } from 'motion/react';
+import { Printer } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 import { STRATEGIC_ROADMAP, REPORT_METADATA } from '../data/reportData';
 import { useSectionReveal } from '../hooks/useSectionReveal';
 import { TermTooltip } from './TermTooltip';
 
 export const RoadmapGratitudeSection: React.FC = () => {
+  const { triggerPrint } = useTheme();
   const { ref: headerRef, containerVariants, itemVariants } = useSectionReveal<HTMLDivElement>({
     distance: 24,
     staggerChildren: 0.12,
@@ -92,7 +95,17 @@ export const RoadmapGratitudeSection: React.FC = () => {
         {/* Footer */}
         <footer className="pt-8 border-t border-[#243324]/10 dark:border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#657351] dark:text-[#A3B59E] font-light">
           <p>© 2026 The Urban Hive Project. Registered UK Charity {REPORT_METADATA.charityNumber}.</p>
-          <p>Crafted for London’s living urban ecosystem.</p>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={triggerPrint}
+              className="print-hide flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 text-[#1F2B1D] dark:text-[#F4EFE6] transition-colors cursor-pointer font-medium"
+              title="Print or save simplified black-and-white report as PDF"
+            >
+              <Printer className="w-3.5 h-3.5 text-[#54734D] dark:text-[#85E7B7]" />
+              <span>Print / Save PDF (B&W)</span>
+            </button>
+            <p className="hidden sm:inline">Crafted for London’s living urban ecosystem.</p>
+          </div>
         </footer>
       </div>
     </section>

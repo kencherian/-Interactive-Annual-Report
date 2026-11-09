@@ -7,25 +7,36 @@ interface ThemeContextType {
   isDark: boolean;
   toggleTheme: () => void;
   setTheme: (theme: Theme) => void;
+  isPrintPreview: boolean;
+  togglePrintPreview: () => void;
+  triggerPrint: () => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-const THEME_STORAGE_KEY = 'urban_hive_theme';
-
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setThemeState] = useState<Theme>('light');
+  const [isPrintPreview, setIsPrintPreview] = useState<boolean>(false);
 
   useEffect(() => {
     const root = document.documentElement;
-    if (theme === 'dark') {
+    if (theme === 'dark' && !isPrintPreview) {
       root.classList.add('dark');
       root.style.colorScheme = 'dark';
     } else {
       root.classList.remove('dark');
       root.style.colorScheme = 'light';
     }
-  }, [theme]);
+  }, [theme, isPrintPreview]);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (isPrintPreview) {
+      root.classList.add('print-version');
+    } else {
+      root.classList.remove('print-version');
+    }
+  }, [isPrintPreview]);
 
   const toggleTheme = () => {
     setThemeState((prev) => (prev === 'light' ? 'dark' : 'light'));
@@ -35,13 +46,27 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setThemeState(newTheme);
   };
 
+  const togglePrintPreview = () => {
+    setIsPrintPreview((prev) => !prev);
+  };
+
+  const triggerPrint = () => {
+    // If not in print preview, we can either trigger directly or enable preview then print
+    if (typeof window !== 'undefined') {
+      window.print();
+    }
+  };
+
   return (
     <ThemeContext.Provider
       value={{
         theme,
-        isDark: theme === 'dark',
+        isDark: theme === 'dark' && !isPrintPreview,
         toggleTheme,
         setTheme,
+        isPrintPreview,
+        togglePrintPreview,
+        triggerPrint,
       }}
     >
       {children}
